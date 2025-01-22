@@ -1,33 +1,19 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import DraggableList from "./components/DraggableList";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import TaskDetail from "./components/TaskDetail";
+import TaskForm from "./components/TaskForm";
+import TaskList from "./components/TaskList";
 import "./index.css";
-import { fetchTasks, setTasks } from "./store/tasksSlice";
-import { RootState, AppDispatch } from "./store";
 
 function App() {
-    const dispatch: AppDispatch = useDispatch();
-    const tasks = useSelector((state: RootState) => state.tasks.tasks);
-    const status = useSelector((state: RootState) => state.tasks.status);
-    const error = useSelector((state: RootState) => state.tasks.error);
-
-    useEffect(() => {
-        if (status === "idle") dispatch(fetchTasks());
-    }, [status, dispatch]);
-
-    if (status === "loading") {
-        return <div>Loading...</div>;
-    }
-
-    if (status === "failed") {
-        return <div>Error: {error}</div>;
-    }
-
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-4">TODO List</h1>
-            <DraggableList tasks={tasks} setTasks={(newTasks) => dispatch(setTasks(newTasks))} />
-        </div>
+        <Router>
+            <Routes>
+                <Route path="/" element={<TaskList />} />
+                <Route path="/tasks/new" element={<TaskForm />} />
+                <Route path="/tasks/edit/:id" element={<TaskForm />} />
+                <Route path="/tasks/:id" element={<TaskDetail />} />
+            </Routes>
+        </Router>
     );
 }
 

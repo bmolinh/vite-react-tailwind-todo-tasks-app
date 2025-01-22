@@ -1,5 +1,9 @@
 import React from "react";
 import { DragDropContext, Draggable, Droppable, OnDragEndResponder } from "react-beautiful-dnd";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { AppDispatch } from "../store";
+import { reorderTasks } from "../store/tasksSlice";
 import { Task } from "../types";
 
 interface DraggableListProps {
@@ -8,6 +12,8 @@ interface DraggableListProps {
 }
 
 const DraggableList: React.FC<DraggableListProps> = ({ tasks, setTasks }) => {
+    const dispatch: AppDispatch = useDispatch();
+
     const onDragEnd: OnDragEndResponder = (result) => {
         if (!result.destination) return;
 
@@ -15,7 +21,13 @@ const DraggableList: React.FC<DraggableListProps> = ({ tasks, setTasks }) => {
         const [removed] = reorderedTasks.splice(result.source.index, 1);
         reorderedTasks.splice(result.destination.index, 0, removed);
 
-        setTasks(reorderedTasks);
+        const updatedTasks = reorderedTasks.map((task, index) => ({
+            ...task,
+            order: index + 1,
+        }));
+
+        setTasks(updatedTasks);
+        dispatch(reorderTasks(updatedTasks));
     };
 
     return (
@@ -32,7 +44,9 @@ const DraggableList: React.FC<DraggableListProps> = ({ tasks, setTasks }) => {
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
                                     >
-                                        {task.title}
+                                        <Link to={`/tasks/${task.id}`} className="block">
+                                            {task.title}
+                                        </Link>
                                     </li>
                                 )}
                             </Draggable>
