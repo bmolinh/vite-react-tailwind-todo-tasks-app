@@ -70,3 +70,19 @@ button:focus-visible {
         background-color: #f9f9f9;
     }
 }
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.tag {
+    background-color: #e0e7ff;
+    color: #1e3a8a;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}

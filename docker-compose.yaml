@@ -1,0 +1,9 @@
+services:
+  vite-react-tailwind-todo-tasks-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:3000/api
+    ports:
+      - "5173:80"
