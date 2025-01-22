@@ -45,7 +45,8 @@ const DraggableList: React.FC<DraggableListProps> = ({ tasks, setTasks }) => {
                                         {...provided.dragHandleProps}
                                     >
                                         <Link to={`/tasks/${task.id}`} className="block">
-                                            {task.title}
+                                            <div className="font-bold">{task.title}</div>
+                                            <div>{new Date(task.dueDate).toLocaleDateString()}</div>
                                         </Link>
                                     </li>
                                 )}

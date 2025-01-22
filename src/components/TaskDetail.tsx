@@ -29,6 +29,9 @@ const TaskDetail: React.FC = () => {
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-4">{task.title}</h1>
             <p>{task.description}</p>
+            <p>
+                <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+            </p>
             <Link to={`/tasks/edit/${task.id}`} className="text-blue-500">
                 Edit Task
             </Link>
