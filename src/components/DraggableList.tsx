@@ -4,7 +4,7 @@ import { Task } from "../types";
 
 interface DraggableListProps {
     tasks: Task[];
-    setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+    setTasks: (tasks: Task[]) => void;
 }
 
 const DraggableList: React.FC<DraggableListProps> = ({ tasks, setTasks }) => {
