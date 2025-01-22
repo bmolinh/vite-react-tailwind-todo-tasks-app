@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppDispatch, RootState } from "../store";
 import { createTask, updateTask } from "../store/tasksSlice";
-import { Task } from "../types";
+import { fetchTags } from "../store/tagsSlice";
+import { Task, Tag } from "../types";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
@@ -12,6 +13,8 @@ const TaskForm: React.FC = () => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
     const tasks = useSelector((state: RootState) => state.tasks.tasks);
+    const tags = useSelector((state: RootState) => state.tags.tags);
+
     const [initialValues, setInitialValues] = useState<Task>({
         id: Date.now(),
         order: tasks.length + 1,
@@ -31,12 +34,19 @@ const TaskForm: React.FC = () => {
         }
     }, [id, tasks]);
 
+    useEffect(() => {
+        dispatch(fetchTags());
+    }, [dispatch]);
+
     const validationSchema = Yup.object({
         title: Yup.string().required("Title is required"),
         description: Yup.string().required("Description is required"),
         dueDate: Yup.date()
             .required("Due Date is required")
             .min(new Date().toISOString().split("T")[0], "Due Date can't be in the past"),
+        tags: Yup.array()
+            .of(Yup.object().shape({ id: Yup.number().required() }))
+            .required("At least one tag is required"),
     });
 
     const handleSubmit = (values: Task) => {
@@ -57,7 +67,7 @@ const TaskForm: React.FC = () => {
                 onSubmit={handleSubmit}
                 enableReinitialize
             >
-                {({ isSubmitting }) => (
+                {({ isSubmitting, setFieldValue }) => (
                     <Form>
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
@@ -91,6 +101,30 @@ const TaskForm: React.FC = () => {
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             />
                             <ErrorMessage name="dueDate" component="div" className="text-red-500 text-sm" />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="tags">
+                                Tags
+                            </label>
+                            <Field
+                                as="select"
+                                name="tags"
+                                multiple
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                    const selectedOptions = Array.from(e.target.selectedOptions, (option) => ({
+                                        id: Number(option.value),
+                                    }));
+                                    setFieldValue("tags", selectedOptions);
+                                }}
+                            >
+                                {tags.map((tag: Tag) => (
+                                    <option key={tag.id} value={tag.id}>
+                                        {tag.name}
+                                    </option>
+                                ))}
+                            </Field>
+                            <ErrorMessage name="tags" component="div" className="text-red-500 text-sm" />
                         </div>
                         <button
                             type="submit"

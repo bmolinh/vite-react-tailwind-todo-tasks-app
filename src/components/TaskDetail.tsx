@@ -32,6 +32,13 @@ const TaskDetail: React.FC = () => {
             <p>
                 <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
             </p>
+            <div className="tags mb-4">
+                {task.tags.map((tag) => (
+                    <span key={tag.id} className="tag">
+                        {tag.name}
+                    </span>
+                ))}
+            </div>
             <Link to={`/tasks/edit/${task.id}`} className="text-blue-500">
                 Edit Task
             </Link>
